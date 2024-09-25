@@ -1,0 +1,13 @@
+spring:
+   profiles:
+     active: dev
+   main:
+     banner-mode: "off"
+   application:
+     name: Service-1  
+   webflux:
+     multipart:
+        max-disk-usage-per-part: 10240KB #default -1
+        max-headers-size: 5KB #default 10KB
+        max-in-memory-size: 10240KB #default 256KB
+        max-parts: 10 #default -1                  

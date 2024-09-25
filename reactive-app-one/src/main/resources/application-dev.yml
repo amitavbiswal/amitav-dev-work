@@ -1,0 +1,127 @@
+spring:
+server:
+   port: 8080
+   forward-headers-strategy: framework
+
+management:
+   tracing:
+      enabled: true
+      sampling:
+         probability: 1.0
+   zipkin:
+     tracing:
+       endpoint: http://localhost:9411/api/v2/spans
+   #otlp:
+     #tracing:
+       #endpoint: http://localhost:4318/v1/traces      
+   endpoints:
+      web:
+         exposure:
+            include: '*'             
+   endpoint:
+      health:
+         show-details: always
+         probes:
+           enabled: true
+         circuitbreakerevents:
+           enabled: true
+         ratelimiterevents:
+           enabled: true  
+   health:
+      circuitbreakers:
+         enabled: true        
+                 
+logging:
+   pattern:
+      correlation: "[${spring.application.name:},%X{traceId:-},%X{spanId:-}] "  
+      level: '[${spring.application.name:},trace:%mdc{traceId},span:%mdc{spanId}]'
+   include-application-name: false   
+   level:
+      io.r2dbc.postgresql.QUERY: DEBUG
+      io.r2dbc.postgresql.PARAM: DEBUG
+      org:
+        springframework:
+          security: DEBUG 
+
+#Redis Configuration--------------------------------------------
+   data:
+      redis:
+         database: 0
+         host: 127.0.0.1
+         port: 6379
+         user: default
+         password: Admin@1234 
+         timeout: 60000
+         ttl: 100000000
+
+   r2dbc:
+#      url: r2dbc:pool:postgresql://localhost:5432/postgres
+      pool:
+         initial-size: 10
+         max-size: 20
+         max-idle-time: 30000
+         max-create-time: 10000
+      show-sql: true
+      format-sql: true
+      
+#springdoc:
+  #packagesToScan: com.amitav.reactiveapp.api,com.amitav.reactiveapp.api
+  #pathsToMatch: /api/v1/**, /api/v1/**
+  
+springdoc:
+  enable-native-support: true
+  packagesToScan: com.amitav.reactiveapp.api,com.amitav.reactiveapp.api
+  #path: v1/reactiveapp/swagger-ui.html
+  api-docs:
+    path: /reactiveapp-docs
+  swagger-ui: 
+    path: /swagger-ui.html
+    
+reactiveapp:
+  openapi: 
+    dev-url: http://localhost:8080
+    prod-url: http://localhost:8080
+    
+resilience4j:
+  # Retry
+  retry:
+    retryAspectOrder: 2
+    instances:
+      binService:
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        maxAttempts: 3
+        waitDuration: 3s
+        recordExceptions: 
+          - java.lang.Exception
+
+  # Circuitbreaker
+  circuitbreaker:
+    circuitBreakerAspectOrder: 1
+    instances:
+      binService:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 100
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 2
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        recordFailurePredicate: com.amitav.reactiveapp.config.FailurePredicate
+      
+
+kafka:
+  bootstrap:
+    servers: localhost:9092,localhost:9093,localhost:9094
+  server:
+    topics:
+      topica: topic.a
+      topicb: topic.b
+      topicc: topic.c
+      topicd: topic.d
+  consumer:
+    groups :
+      group1: group-id-1
+      group2: group-id-2
+      group3: group-id-3 
+      group4: group-id-4           

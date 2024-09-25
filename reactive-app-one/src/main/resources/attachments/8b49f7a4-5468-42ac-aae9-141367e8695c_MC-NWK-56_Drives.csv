@@ -1,0 +1,3 @@
+Drive_Serial_Number,Drive_Part_Number,Drive_Manufacturer,System_Manufacturer,Environment,Media_Type,Drive_Source,Location_Source,System_Serial_Number,Asset_Tag,Drive_Condition,Drive_Health,Wipe_Status,Drive_Serial_Observed,Drive_Movement_Date,Target_Disposition_Status,Target_Vendor,Return_by_Date,TDS_RMA_Number,TDS_Update_Date,Ticket_Id,aDB_Failure_Type,COE,Loose_COE_Number,Location,Created_By,Created_Date,Updated_By,Last_Updated_Date
+ab20feb2023427,,Apple,,,HDD,Unknown,,,,Unknown,,Unwiped,,02/20/2023,,,,,,NOCS,,,,Newark,Amitav Biswal,02/20/2023,Amitav Biswal,02/20/2023
+ab20feb2023428,,Dell,,,HDD,Unknown,,,,Unknown,,Unwiped,,02/20/2023,,,,,,NOCS,,,,Newark,Amitav Biswal,02/20/2023,Amitav Biswal,02/20/2023
