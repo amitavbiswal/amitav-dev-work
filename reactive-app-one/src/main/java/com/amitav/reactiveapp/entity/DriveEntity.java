@@ -27,7 +27,10 @@ public class DriveEntity {
   @Column("MANUFACTURER")
   private String manufacturer;
 
+  @Column("CREATION_DATE")
   private LocalDateTime creationDate;
 
-  @LastModifiedDate private LocalDateTime modifiedDate;
+  @Column("MODIFIED_DATE")
+  @LastModifiedDate
+  private LocalDateTime modifiedDate;
 }
