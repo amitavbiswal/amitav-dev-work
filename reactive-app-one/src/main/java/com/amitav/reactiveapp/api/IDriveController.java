@@ -14,9 +14,9 @@ public interface IDriveController {
 
   @PostMapping(
       path = {"/drives"},
-      consumes = {"applciation/json"},
+      consumes = {"application/json"},
       produces = {"application/json"})
-  public default Mono<ResponseEntity<Mono<DriveDTO>>> createDrive(DriveDTO driveDto) {
+  default Mono<ResponseEntity<Mono<DriveDTO>>> createDrive(DriveDTO driveDto) {
     return getDelegate().createDrive(driveDto);
   }
 }
