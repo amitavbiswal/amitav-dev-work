@@ -8,6 +8,7 @@ import com.amitav.reactiveapp.entity.DriveEntity;
 import com.amitav.reactiveapp.repo.DriveRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class DriveServiceImpl implements DriveService {
                     .serialNo(driveDto.getSerialNo())
                     .manufacturer(driveDto.getManufacturer())
                     .creationDate(currentTimeInUtc())
+                    .modifiedDate(currentTimeInUtc())
                     .build())
             .map(
                 driveEntity ->
@@ -50,5 +52,25 @@ public class DriveServiceImpl implements DriveService {
 
     log.info("DriveServiceImpl.createDrive--------------------------------E");
     return monoResponse;
+  }
+
+  @Cacheable(value = "drive", key = "#driveId")
+  @Override
+  public Mono<ResponseEntity<Mono<DriveDTO>>> fetchDrive(Long driveId) {
+    Mono<DriveEntity> monoDriveEntity = driveRepository.findById(driveId).cache();
+    Mono<DriveDTO> monoDriveDTO =
+        monoDriveEntity.map(
+            driveEntity ->
+                DriveDTO.builder()
+                    .driveId(driveEntity.getDriveId())
+                    .serialNo(driveEntity.getSerialNo())
+                    .manufacturer(driveEntity.getManufacturer())
+                    .creationDate(driveEntity.getCreationDate())
+                    .modifiedDate(driveEntity.getModifiedDate())
+                    .build());
+
+    return monoDriveDTO
+        .map(driveDTO -> ResponseEntity.ok(Mono.just(driveDTO)))
+        .defaultIfEmpty(ResponseEntity.notFound().build());
   }
 }

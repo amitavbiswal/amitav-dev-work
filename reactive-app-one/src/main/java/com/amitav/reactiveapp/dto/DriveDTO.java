@@ -1,6 +1,7 @@
 /** DriveDto.java */
 package com.amitav.reactiveapp.dto;
 
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,13 +23,13 @@ public class DriveDTO {
 
   private Long driveId;
 
+  @Size(min = 3, max = 10)
   private String serialNo;
 
+  @Size(min = 3, max = 6)
   private String manufacturer;
 
   private LocalDateTime creationDate;
 
   private LocalDateTime modifiedDate;
-
-  private BinDTO binDTO;
 }

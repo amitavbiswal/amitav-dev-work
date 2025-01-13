@@ -15,4 +15,6 @@ public interface DriveService {
    * @return
    */
   Mono<ResponseEntity<Mono<DriveDTO>>> createDrive(DriveDTO driveDto);
+
+  Mono<ResponseEntity<Mono<DriveDTO>>> fetchDrive(Long driveId);
 }
