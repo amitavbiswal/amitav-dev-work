@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudySprint — Grade 7 & 8 Practice</title>
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#f4f7fb" id="meta-theme-color" />
+  <script>
+    /* Apply the saved (or system) theme before first paint so the page never flashes the wrong colours. */
+    (function () {
+      try {
+        var t = localStorage.getItem('studysprint_theme');
+        if (t !== 'dark' && t !== 'light') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* storage blocked: stay on the light theme */ }
+    })();
+  </script>
+  <link rel="stylesheet" href="css/style.css?v=35" />
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="brand">🚀 StudySprint</div>
+    <div class="header-controls">
+      <label class="speed-control" title="Voice speed for all spoken audio">
+        <span class="speed-icon" aria-hidden="true">🐢</span>
+        <span class="speed-label">Voice speed</span>
+        <select id="speech-rate" aria-label="Voice speed">
+          <option value="0.5">0.5×</option>
+          <option value="0.6">0.6×</option>
+          <option value="0.7">0.7×</option>
+          <option value="0.8">0.8×</option>
+          <option value="0.9">0.9×</option>
+          <option value="1">1×</option>
+          <option value="1.2">1.2×</option>
+        </select>
+      </label>
+      <button id="theme-toggle" class="sound-toggle theme-toggle" title="Switch to dark mode" aria-label="Switch to dark mode">🌙</button>
+      <button id="sound-toggle" class="sound-toggle" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+
+    <!-- HOME: grade selection -->
+    <section id="screen-home" class="screen active">
+      <h1>Pick your grade</h1>
+      <p class="subtitle">Quick practice with instant feedback. No sign-up needed.</p>
+      <div class="name-field">
+        <label for="user-name-input">Your name <span class="hint">(optional, for spoken feedback)</span></label>
+        <input type="text" id="user-name-input" maxlength="20" placeholder="e.g. Alex" autocomplete="off" />
+      </div>
+      <div class="grade-grid">
+        <button class="grade-card" data-grade="7">
+          <span class="grade-number">7</span>
+          <span class="grade-label">7th Grade</span>
+        </button>
+        <button class="grade-card" data-grade="8">
+          <span class="grade-number">8</span>
+          <span class="grade-label">8th Grade</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SUBJECT SELECTION -->
+    <section id="screen-subjects" class="screen">
+      <button class="link-btn" id="back-to-home">&larr; Change grade</button>
+      <h1><span id="subjects-grade-label"></span> Subjects</h1>
+      <p class="subtitle">Choose a subject to practice.</p>
+      <div class="topics-grid" id="subjects-grid"></div>
+    </section>
+
+    <!-- TOPIC SELECTION -->
+    <section id="screen-topics" class="screen">
+      <button class="link-btn" id="back-to-subjects">&larr; Change subject</button>
+      <h1><span id="topics-subject-label"></span> Topics</h1>
+      <p class="subtitle" id="topics-subtitle">Choose a topic to practice, or try a mixed set.</p>
+      <div class="topics-grid" id="topics-grid"></div>
+    </section>
+
+    <!-- TUTORIAL -->
+    <section id="screen-tutorial" class="screen">
+      <button class="link-btn" id="tutorial-back">&larr; Topics</button>
+      <div class="tutorial-card">
+        <div class="tutorial-head">
+          <span class="tutorial-topic"><span id="tutorial-topic-icon"></span> <span id="tutorial-topic-title"></span></span>
+          <span id="tutorial-step-counter" class="tutorial-step-counter"></span>
+        </div>
+        <div id="tutorial-dots" class="tutorial-dots"></div>
+        <h2 id="tutorial-step-title" class="tutorial-step-title"></h2>
+
+        <div id="tutorial-lesson" class="lesson-grid">
+          <div class="lesson-visual">
+            <div id="tutorial-scene" class="tutorial-scene"></div>
+            <div class="scene-controls">
+              <button type="button" id="tutorial-pause" class="scene-btn">⏸ Pause</button>
+              <button type="button" id="tutorial-replay" class="scene-btn">↻ Replay</button>
+            </div>
+          </div>
+          <div class="lesson-copy">
+            <div id="tutorial-text" class="tutorial-text"></div>
+            <div id="tutorial-explain" class="explain-box hidden">
+              <div class="explain-head">👀 What you're seeing</div>
+              <div id="tutorial-explain-body" class="explain-body"></div>
+            </div>
+            <div class="narration-bar">
+              <button type="button" id="tutorial-listen" class="listen-btn">🔊 Listen</button>
+              <label class="auto-narrate"><input type="checkbox" id="tutorial-autonarrate" checked /> Auto-play</label>
+            </div>
+          </div>
+        </div>
+        <div id="tutorial-recap" class="tutorial-recap hidden"></div>
+
+        <div class="tutorial-nav">
+          <button type="button" id="tutorial-prev" class="secondary-btn hidden">← Back</button>
+          <span class="tutorial-nav-spacer"></span>
+          <button type="button" id="tutorial-again" class="secondary-btn hidden">↻ Watch again</button>
+          <button type="button" id="tutorial-next" class="primary-btn">Next →</button>
+          <button type="button" id="tutorial-practice" class="primary-btn hidden">Practice this topic →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="screen-quiz" class="screen">
+      <div class="quiz-top">
+        <button class="link-btn" id="quit-quiz">&larr; Topics</button>
+        <div class="quiz-meta">
+          <span class="quiz-topic-group">
+            <span id="quiz-topic-label" class="quiz-topic-label"></span>
+            <span id="quiz-bloom-badge" class="bloom-badge"></span>
+          </span>
+          <span id="quiz-counter"></span>
+          <span id="quiz-score"></span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+      <div class="question-card">
+        <div id="question-prompt" class="question-prompt"></div>
+        <div id="question-diagram" class="question-diagram hidden"></div>
+        <div id="attempts-indicator" class="attempts-indicator"></div>
+        <div id="answer-area" class="answer-area"></div>
+        <div id="feedback" class="feedback hidden"></div>
+        <div class="quiz-actions">
+          <button id="check-btn" class="primary-btn">Check</button>
+          <button id="next-btn" class="primary-btn hidden">Next →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUMMARY -->
+    <section id="screen-summary" class="screen">
+      <div class="summary-card">
+        <div id="summary-emoji" class="summary-emoji"></div>
+        <h1 id="summary-message"></h1>
+        <div class="summary-score-row">
+          <span id="summary-score" class="summary-score"></span>
+          <span id="summary-pct" class="summary-pct"></span>
+        </div>
+        <div id="summary-breakdown" class="summary-breakdown"></div>
+        <div class="summary-actions">
+          <button id="retry-btn" class="primary-btn">Try Again</button>
+          <button id="choose-topic-btn" class="secondary-btn">Choose New Topic</button>
+          <button id="summary-home-btn" class="secondary-btn">Back Home</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/questions.js?v=35"></script>
+  <script src="js/physics-questions.js?v=35"></script>
+  <script src="js/chemistry-questions.js?v=35"></script>
+  <script src="js/english-questions.js?v=35"></script>
+  <script src="js/puzzles-core.js?v=35"></script>
+  <script src="js/puzzles-logic.js?v=35"></script>
+  <script src="js/puzzles-math.js?v=35"></script>
+  <script src="js/puzzles-riddles.js?v=35"></script>
+  <script src="js/puzzles-visual.js?v=35"></script>
+  <script src="js/puzzles-classic.js?v=35"></script>
+  <script src="js/puzzles-build.js?v=35"></script>
+  <script src="js/vendor/three.min.js"></script>
+  <script src="js/tutorials-core.js?v=35"></script>
+  <script src="js/chem3d-kit.js?v=35"></script>
+  <script src="js/physics-tutorials.js?v=35"></script>
+  <script src="js/chemistry-tutorials-a.js?v=35"></script>
+  <script src="js/chemistry-tutorials-b.js?v=35"></script>
+  <script src="js/chemistry-tutorials-c.js?v=35"></script>
+  <script src="js/physics-examples-a.js?v=35"></script>
+  <script src="js/physics-examples-b.js?v=35"></script>
+  <script src="js/chemistry-examples-a.js?v=35"></script>
+  <script src="js/chemistry-examples-b.js?v=35"></script>
+  <script src="js/explain-physics-a.js?v=35"></script>
+  <script src="js/explain-physics-b.js?v=35"></script>
+  <script src="js/explain-chemistry-a.js?v=35"></script>
+  <script src="js/explain-chemistry-b.js?v=35"></script>
+  <script src="js/chem3d-atoms.js?v=35"></script>
+  <script src="js/chem3d-molecules.js?v=35"></script>
+  <script src="js/chem3d-mixtures.js?v=35"></script>
+  <script src="js/chem3d-reactions.js?v=35"></script>
+  <script src="js/chem3d-acids.js?v=35"></script>
+  <script src="js/more-physics-forces.js?v=35"></script>
+  <script src="js/more-physics-energy.js?v=35"></script>
+  <script src="js/more-physics-matter.js?v=35"></script>
+  <script src="js/more-physics-heat.js?v=35"></script>
+  <script src="js/more-physics-waves.js?v=35"></script>
+  <script src="js/more-physics-electricity.js?v=35"></script>
+  <script src="js/more-chem-atoms.js?v=35"></script>
+  <script src="js/more-chem-molecules.js?v=35"></script>
+  <script src="js/more-chem-mixtures.js?v=35"></script>
+  <script src="js/more-chem-reactions.js?v=35"></script>
+  <script src="js/more-chem-acids.js?v=35"></script>
+  <script src="js/more-chem-periodic.js?v=35"></script>
+  <script src="js/audio.js?v=35"></script>
+  <script src="js/app.js?v=35"></script>
+</body>
+</html>
